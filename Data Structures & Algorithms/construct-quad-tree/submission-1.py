@@ -1,0 +1,39 @@
+"""
+# Definition for a QuadTree node.
+class Node:
+    def __init__(self, val, isLeaf, topLeft, topRight, bottomLeft, bottomRight):
+        self.val = val
+        self.isLeaf = isLeaf
+        self.topLeft = topLeft
+        self.topRight = topRight
+        self.bottomLeft = bottomLeft
+        self.bottomRight = bottomRight
+"""
+
+class Solution:
+    def construct(self, grid: List[List[int]]) -> 'Node':
+        ROWS = len(grid)
+
+        leafNode = {0:Node(0, 1),
+                    1:Node(1,1)}
+        
+        def dfs(n, r, c):
+            if n == 1:
+                return leafNode[grid[r][c]]
+            
+            n //= 2
+            topLeft = dfs(n, r, c)
+            topRight = dfs(n, r, c+n)
+            bottomLeft = dfs(n, r+n, c)
+            bottomRight = dfs(n, r+n, c+n)
+
+            if (topLeft.isLeaf and
+                topRight.isLeaf and
+                bottomLeft.isLeaf and
+                bottomRight.isLeaf and
+                topLeft.val == topRight.val == bottomLeft.val == bottomRight.val):
+                return topLeft
+            else:
+                return Node(1, 0, topLeft, topRight, bottomLeft, bottomRight)
+        
+        return dfs(ROWS, 0, 0)
